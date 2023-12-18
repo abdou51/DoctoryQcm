@@ -31,6 +31,7 @@ const noteRoutes = require("./routes/noteRoutes");
 const favouriteRoutes = require("./routes/favouriteRoutes");
 const signalRoutes = require("./routes/signalRoutes");
 const answerRoutes = require("./routes/answerRoutes");
+const statsRoutes = require("./routes/statsRoutes");
 
 const api = process.env.API_URL;
 
@@ -43,6 +44,7 @@ app.use("/notes", noteRoutes);
 app.use("/favourites", favouriteRoutes);
 app.use("/signals", signalRoutes);
 app.use("/answers", answerRoutes);
+app.use("/stats", statsRoutes);
 // Handle 404 errors
 app.use((req, res, next) => {
   res.status(404).json({ message: "Route not found" });

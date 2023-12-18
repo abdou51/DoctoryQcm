@@ -13,14 +13,14 @@ const registerUser = async (req, res) => {
     if (user) {
       return res.status(400).json({
         success: false,
-        message: "User with given email already exists",
+        message: "L'utilisateur avec l'email donné existe déjà",
       });
     }
 
     if (userData.email === password) {
       return res.status(400).json({
         success: false,
-        message: "Your email cannot be your password",
+        message: "Votre email ne peut pas être votre mot de passe",
       });
     }
 
@@ -32,13 +32,14 @@ const registerUser = async (req, res) => {
     user = await user.save();
 
     if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "The user cannot be created" });
+      return res.status(400).json({
+        success: false,
+        message: "L'utilisateur ne peut pas être créé",
+      });
     }
     res
       .status(200)
-      .json({ success: true, message: "User registered successfully" });
+      .json({ success: true, message: "Utilisateur enregistré avec succès" });
   } catch (error) {
     res.status(500).json({ success: false, error: error });
   }
@@ -48,30 +49,33 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
 
     if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Utilisateur N'existe Pas" });
-    }
-    if (!user.isValidated) {
       return res.status(400).json({
         success: false,
-        message: "Votre compte n'est pas encore activé",
+        message: "Email ou mot de passe incorrect",
       });
     }
     if (user && bcrypt.compareSync(req.body.password, user.passwordHash)) {
       try {
+        if (!user.isValidated) {
+          return res.status(400).json({
+            success: false,
+            message: "Votre compte n'est pas encore activé",
+          });
+        }
         const token = generateToken(user.id, user.isAdmin);
         res.status(200).json({
-          message: "Login successful",
+          message: "Connexion réussie",
           token: token,
         });
       } catch (tokenError) {
-        res.status(500).send("An error occurred while generating the token.");
+        res
+          .status(500)
+          .send("Une erreur s'est produite lors de la génération du jeton.");
       }
     } else {
       res.status(400).json({
         success: false,
-        message: "Nom d'utilisateur ou mot de passe incorrect",
+        message: "Email ou mot de passe incorrect",
       });
     }
   } catch (error) {
@@ -113,9 +117,25 @@ const updateUser = async (req, res) => {
     console.log(error);
   }
 };
+const getMe = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const user = await User.findById(userId).select("-passwordHash");
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Utilisateur N'existe Pas" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).send("Une erreur s'est produite .");
+    console.log(error);
+  }
+};
 
 module.exports = {
   registerUser,
   loginUser,
   updateUser,
+  getMe,
 };
