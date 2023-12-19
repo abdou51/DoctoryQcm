@@ -45,7 +45,8 @@ const deleteCourse = async (req, res) => {
 };
 const getCourses = async (req, res) => {
   try {
-    const moduleId = req.params.module;
+    const moduleId = req.query.module;
+    // changed params to query
     if (!moduleId) {
       return res.status(400).json({ error: "Module not provided" });
     }

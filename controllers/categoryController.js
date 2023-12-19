@@ -1,4 +1,7 @@
 const Category = require("../models/category");
+const Module = require("../models/module");
+const Course = require("../models/course");
+const Question = require("../models/question");
 
 const createCategory = async (req, res) => {
   try {
@@ -54,9 +57,39 @@ const getCategories = async (req, res) => {
   }
 };
 
+const getCategoriesWithStats = async (req, res) => {
+  try {
+    const categories = await Category.find();
+    let result = [];
+    for(const category of categories){
+
+      const modulesNum = await Module.countDocuments({ category: category._id });
+
+      const modulesInCategory = await Module.find({ category: category._id });
+      
+      const moduleIds= modulesInCategory.map(module => module._id);
+      
+      const coursesNum = await Course.countDocuments({ module: { $in: moduleIds } });
+
+      const questionsNum = await Question.countDocuments({ category: category._id })
+
+      result.push({
+        category:category,
+        modulesNum:modulesNum,
+        coursesNum:coursesNum,
+        questionsNum:questionsNum,
+      });
+    }
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching Categories with stats" });
+  }
+};
+
 module.exports = {
   createCategory,
   updateCategory,
   deleteCategory,
   getCategories,
+  getCategoriesWithStats,
 };

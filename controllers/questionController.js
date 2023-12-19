@@ -62,6 +62,7 @@ const deleteQuestion = async (req, res) => {
     res.status(500).json({ error: "Error deleting Question" });
   }
 };
+
 const getQuestions = async (req, res) => {
   try {
     const course = req.query.course;
@@ -77,6 +78,49 @@ const getQuestions = async (req, res) => {
     res.status(500).json({ error: "Error fetching Question" });
   }
 };
+
+const getQuestionsWithDetails = async (req, res) => {
+  try {
+    const course = req.query.course;
+    const userId = req.user.userId;
+    console.log(req.user);
+    if (!course) {
+      return res
+        .status(400)
+        .json({ error: "Missing course id in request query" });
+    }
+    const questions = await Question.find({ course: course });
+    let result = [];
+    for(const question of questions){
+      const isFavourite = await Favourite.exists({
+        user: userId,
+        question: question._id,
+      });
+      const note = await Note.findOne({
+        user: userId,
+        question: question._id,
+      }).select("note");
+      let isFav;
+  
+      if (!isFavourite) {
+        isFav = false;
+      } else if (isFavourite) {
+        isFav = true;
+      }
+
+      result.push({
+        question: question,
+        isFavourite: isFav,
+        note: note,
+      });
+    }
+    res.status(200).json(result);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error fetching Question" });
+  }
+};
+
 const getSingleQuestion = async (req, res) => {
   try {
     const questionId = req.params.id;
@@ -156,4 +200,5 @@ module.exports = {
   getQuestions,
   getSingleQuestion,
   generateRandom,
+  getQuestionsWithDetails,
 };
