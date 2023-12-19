@@ -45,7 +45,11 @@ const deleteModule = async (req, res) => {
 };
 const getModules = async (req, res) => {
   try {
-    const modules = await Module.find();
+    const categoryId = req.query.category;
+    if (!categoryId) {
+      return res.status(400).json({ error: "Category not provided" });
+    }
+    const modules = await Module.find({ category: categoryId });
     res.status(200).json(modules);
   } catch (error) {
     res.status(500).json({ error: "Error fetching Modules" });
