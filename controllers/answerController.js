@@ -21,7 +21,7 @@ const deleteAnswer = async (req, res) => {
   try {
     const answer = await Answer.findById(req.params.id);
     if (answer) {
-      await answer.remove();
+      await answer.deleteOne();
       res.json({ message: "Answer removed" });
     } else {
       res.status(404).json({ message: "Answer not found" });
