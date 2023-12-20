@@ -6,6 +6,6 @@ const userJwt = require("../middlewares/userJwt");
 
 router.post("/register", userController.registerUser);
 router.post("/login", userController.loginUser);
-router.put("/:id", userController.updateUser);
+router.put("/", userJwt, userController.updateUser);
 router.get("/me", userJwt, userController.getMe);
 module.exports = router;

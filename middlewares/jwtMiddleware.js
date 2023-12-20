@@ -8,7 +8,7 @@ function generateToken(userId, isAdmin) {
       isAdmin: isAdmin,
     },
     secret,
-    { expiresIn: "1w" }
+    { expiresIn: "1m" }
   );
 }
 

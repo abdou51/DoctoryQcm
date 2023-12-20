@@ -88,22 +88,22 @@ const loginUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const userId = req.user.userId;
 
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        email: req.body.email,
+        name: req.body.name,
+        phoneNumber: req.body.phoneNumber,
+      },
+      { new: true }
+    );
     if (!user) {
       return res
         .status(400)
         .json({ success: false, message: "Utilisateur N'existe Pas" });
     }
-
-    await User.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: req.body,
-      },
-      { new: true }
-    );
-
     res.status(200).json({
       success: true,
       message: "Utilisateur mis à jour avec succès",
@@ -132,7 +132,6 @@ const getMe = async (req, res) => {
     console.log(error);
   }
 };
-
 module.exports = {
   registerUser,
   loginUser,
