@@ -19,7 +19,7 @@ const createFavourite = async (req, res) => {
 
 const removeFavourite = async (req, res) => {
   try {
-    const questionId = req.params.question;
+    const questionId = req.params.id;
     const userId = req.user.userId;
     await Favourite.deleteOne({ user: userId, question: questionId });
     res.status(204).json({ message: "Favourite removed" });

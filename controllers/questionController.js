@@ -89,9 +89,11 @@ const getQuestionsWithDetails = async (req, res) => {
         .status(400)
         .json({ error: "Missing course id in request query" });
     }
-    const questions = await Question.find({ course: course });
+    const questions = await Question.find({ course: course }).select(
+      "-createdAt -updatedAt -module -category -course"
+    );
     let result = [];
-    for(const question of questions){
+    for (const question of questions) {
       const isFavourite = await Favourite.exists({
         user: userId,
         question: question._id,
@@ -101,7 +103,7 @@ const getQuestionsWithDetails = async (req, res) => {
         question: question._id,
       }).select("note");
       let isFav;
-  
+
       if (!isFavourite) {
         isFav = false;
       } else if (isFavourite) {

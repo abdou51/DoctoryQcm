@@ -1,11 +1,11 @@
 const jwt = require("jsonwebtoken");
 const secret = process.env.secret;
 
-function generateToken(userId, role) {
+function generateToken(userId, isAdmin) {
   return jwt.sign(
     {
       userId: userId,
-      role: role,
+      isAdmin: isAdmin,
     },
     secret,
     { expiresIn: "1w" }

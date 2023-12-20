@@ -19,7 +19,7 @@ const createAnswer = async (req, res) => {
 
 const deleteAnswer = async (req, res) => {
   try {
-    const answer = await Answer.findById(req.params.id);
+    const answer = await Answer.findByIdAndDelete(req.params.id);
     if (answer) {
       await answer.remove();
       res.json({ message: "Answer removed" });
