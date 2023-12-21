@@ -71,7 +71,7 @@ const getSimulations = async (req, res) => {
   try {
     const userId = req.user.userId;
     const simulations = await Simulation.find({ user: userId })
-      .select("id score updatedAt")
+      .select("id score updatedAt timeSpent")
       .sort("-createdAt");
     res.status(200).json(simulations);
   } catch (error) {

@@ -5,17 +5,14 @@ const questionSchema = new mongoose.Schema(
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: true,
     },
     module: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Module",
-      required: true,
     },
     course: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course",
-      required: true,
     },
     text: {
       type: String,
