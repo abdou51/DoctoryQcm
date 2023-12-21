@@ -52,13 +52,14 @@ const deleteSimulation = async (req, res) => {
 const updateSimlationAnswersQuestions = async (req, res) => {
   try {
     const simulationId = req.params.id;
-    const { answers, score } = req.body;
+    const { answers, score, timeSpent } = req.body;
     const simulation = await Simulation.findById(simulationId);
     if (!simulation) {
       return res.status(404).json({ error: "Simulation not found" });
     }
     simulation.questions = answers;
     simulation.score = score;
+    simulation.timeSpent = timeSpent;
     await simulation.save();
     res.status(200).json({ message: "Simulation updated successfully" });
   } catch (error) {

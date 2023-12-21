@@ -203,12 +203,37 @@ const getFavouriteQuestions = async (req, res) => {
         },
       },
       {
+        $lookup: {
+          from: "notes",
+          let: { questionId: "$question._id", userId: "$user" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$question", "$$questionId"] },
+                    { $eq: ["$user", "$$userId"] },
+                  ],
+                },
+              },
+            },
+            {
+              $project: {
+                note: 1,
+                _id: 1,
+              },
+            },
+          ],
+          as: "note",
+        },
+      },
+      {
         $project: {
-          _id: "$question._id",
+          question: "$question",
+          note: { $arrayElemAt: ["$note", 0] },
         },
       },
     ]);
-
     res.status(200).json(favouriteQuestions);
   } catch (error) {
     console.log(error);

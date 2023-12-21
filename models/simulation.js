@@ -7,6 +7,9 @@ const simulationSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    timeSpent: {
+      type: String,
+    },
     score: {
       type: Number,
       default: 0,
