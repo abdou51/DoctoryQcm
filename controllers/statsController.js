@@ -382,18 +382,50 @@ const getAnswersPercentageByCourse = async (req, res) => {
 const getFavouriteStats = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const categories = await Category.find();
-    const results = await Promise.all(
-      categories.map(async (category) => {
-        const count = await Favourite.countDocuments({
-          user: userId,
-          question: {
-            $in: await Question.find({ category: category._id }).select("_id"),
-          },
-        });
-        return { category: category, count };
-      })
-    );
+
+    const results = await Favourite.aggregate([
+      {
+        $match: {
+          user: new mongoose.Types.ObjectId(userId),
+        },
+      },
+      {
+        $lookup: {
+          from: "questions",
+          localField: "question",
+          foreignField: "_id",
+          as: "question",
+        },
+      },
+      {
+        $unwind: "$question",
+      },
+      {
+        $group: {
+          _id: "$question.category",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "_id",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      {
+        $unwind: "$category",
+      },
+      {
+        $project: {
+          _id: 0,
+          category: "$category",
+          count: 1,
+        },
+      },
+    ]);
+
     res.status(200).json(results);
   } catch (error) {
     console.log(error);
