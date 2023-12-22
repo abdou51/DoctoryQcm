@@ -229,7 +229,12 @@ const getFavouriteQuestions = async (req, res) => {
       },
       {
         $project: {
-          question: "$question",
+          question: {
+            _id: "$question._id",
+            text: "$question.text",
+            choices: "$question.choices",
+            correctAnswers: "$question.correctAnswers",
+          },
           note: { $arrayElemAt: ["$note", 0] },
         },
       },
