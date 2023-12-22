@@ -20,4 +20,19 @@ router.get(
   userJwt,
   statsController.getAnswersPercentageByCourse
 );
+router.get(
+  "/favouritecategories",
+  userJwt,
+  statsController.getNumberOfFavouriteQuestionsPerCategory
+);
+router.get(
+  "/favouriteModules",
+  userJwt,
+  statsController.getNumberOfFavouriteQuestionsPerModule
+);
+router.get(
+  "/favouriteCourses",
+  userJwt,
+  statsController.getNumberOfFavouriteQuestionsPerCourse
+);
 module.exports = router;

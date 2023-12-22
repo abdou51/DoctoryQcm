@@ -17,6 +17,168 @@ const getStats = async (req, res) => {
     res.status(500).json({ error: "Error Getting Stats" });
   }
 };
+const getNumberOfFavouriteQuestionsPerCategory = async (req, res) => {
+  try {
+    const userId = new mongoose.Types.ObjectId(req.user.userId);
+
+    const favouriteQuestionsPerCategory = await Category.aggregate([
+      {
+        $lookup: {
+          from: "questions",
+          localField: "_id",
+          foreignField: "category",
+          as: "questions",
+        },
+      },
+      {
+        $lookup: {
+          from: "answers",
+          let: { questionIds: "$questions._id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $in: ["$question", "$$questionIds"] },
+                    { $eq: ["$user", userId] },
+                    { $eq: ["$favourite", true] },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "favouriteAnswers",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          favouriteQuestions: { $size: "$favouriteAnswers" },
+        },
+      },
+    ]);
+
+    res.status(200).json(favouriteQuestionsPerCategory);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ error: "Error getting Favourite Questions by Category" });
+  }
+};
+const getNumberOfFavouriteQuestionsPerModule = async (req, res) => {
+  try {
+    const userId = new mongoose.Types.ObjectId(req.user.userId);
+    const categoryId = new mongoose.Types.ObjectId(req.query.category);
+
+    const favouriteQuestionsPerModule = await Module.aggregate([
+      {
+        $match: {
+          category: categoryId,
+        },
+      },
+      {
+        $lookup: {
+          from: "questions",
+          localField: "_id",
+          foreignField: "module",
+          as: "questions",
+        },
+      },
+      {
+        $lookup: {
+          from: "answers",
+          let: { questionIds: "$questions._id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $in: ["$question", "$$questionIds"] },
+                    { $eq: ["$user", userId] },
+                    { $eq: ["$favourite", true] },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "favouriteAnswers",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          favouriteQuestions: { $size: "$favouriteAnswers" },
+        },
+      },
+    ]);
+
+    res.status(200).json(favouriteQuestionsPerModule);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ error: "Error getting Favourite Questions by Module" });
+  }
+};
+const getNumberOfFavouriteQuestionsPerCourse = async (req, res) => {
+  try {
+    const userId = new mongoose.Types.ObjectId(req.user.userId);
+    const moduleId = new mongoose.Types.ObjectId(req.query.module);
+
+    const favouriteQuestionsPerCourse = await Course.aggregate([
+      {
+        $match: {
+          module: moduleId,
+        },
+      },
+      {
+        $lookup: {
+          from: "questions",
+          localField: "_id",
+          foreignField: "course",
+          as: "questions",
+        },
+      },
+      {
+        $lookup: {
+          from: "answers",
+          let: { questionIds: "$questions._id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $in: ["$question", "$$questionIds"] },
+                    { $eq: ["$user", userId] },
+                    { $eq: ["$favourite", true] },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "favouriteAnswers",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          favouriteQuestions: { $size: "$favouriteAnswers" },
+        },
+      },
+    ]);
+
+    res.status(200).json(favouriteQuestionsPerCourse);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ error: "Error getting Favourite Questions by Course" });
+  }
+};
 const getAnswersPercentageByCategory = async (req, res) => {
   try {
     const userId = new mongoose.Types.ObjectId(req.user.userId);
@@ -147,6 +309,7 @@ const getAnswersPercentageByModule = async (req, res) => {
       .json({ error: "Error getting Answers Percentage by Module" });
   }
 };
+
 const getAnswersPercentageByCourse = async (req, res) => {
   try {
     const userId = new mongoose.Types.ObjectId(req.user.userId);
@@ -220,4 +383,7 @@ module.exports = {
   getAnswersPercentageByCategory,
   getAnswersPercentageByModule,
   getAnswersPercentageByCourse,
+  getNumberOfFavouriteQuestionsPerCategory,
+  getNumberOfFavouriteQuestionsPerCourse,
+  getNumberOfFavouriteQuestionsPerModule,
 };
