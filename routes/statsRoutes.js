@@ -5,6 +5,7 @@ const userJwt = require("../middlewares/userJwt");
 // Define routes
 
 router.get("/count", userJwt, statsController.getStats);
+router.get("/favourites", userJwt, statsController.getFavouriteStats);
 router.get(
   "/answers-per-category",
   userJwt,

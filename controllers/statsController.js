@@ -3,7 +3,7 @@ const Module = require("../models/module");
 const Course = require("../models/course");
 const Question = require("../models/question");
 const mongoose = require("mongoose");
-const Answer = require("../models/answer");
+const Favourite = require("../models/favourite");
 
 const getStats = async (req, res) => {
   try {
@@ -378,8 +378,41 @@ const getAnswersPercentageByCourse = async (req, res) => {
       .json({ error: "Error getting Answers Percentage by Course" });
   }
 };
+
+const getFavouriteStats = async (req, res) => {
+  try {
+    const categories = await Category.find();
+
+    const stats = await Promise.all(
+      categories.map(async (category) => {
+        const favouriteModules = await Favourite.countDocuments({
+          "question.module": category._id,
+        });
+        const favouriteCourses = await Favourite.countDocuments({
+          "question.course": category._id,
+        });
+        const favouriteQuestions = await Favourite.countDocuments({
+          "question.category": category._id,
+        });
+
+        return {
+          category: category,
+          favouriteModules,
+          favouriteCourses,
+          favouriteQuestions,
+        };
+      })
+    );
+
+    res.status(200).json(stats);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error getting Favourite Stats" });
+  }
+};
 module.exports = {
   getStats,
+  getFavouriteStats,
   getAnswersPercentageByCategory,
   getAnswersPercentageByModule,
   getAnswersPercentageByCourse,
