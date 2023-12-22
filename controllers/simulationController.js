@@ -82,14 +82,19 @@ const getSimulations = async (req, res) => {
 const getSingleSimulation = async (req, res) => {
   try {
     const simulationId = req.params.id;
-    const simulation = await Simulation.findById(simulationId);
+    const simulation = await Simulation.findById(simulationId).populate({
+      path: "questions.question",
+      model: "Question",
+      populate: [
+        { path: "category", model: "Category", select: "name" },
+        { path: "course", model: "Course", select: "name" },
+        { path: "module", model: "Module", select: "name" },
+      ],
+    });
+
     if (!simulation) {
       return res.status(404).json({ error: "Simulation not found" });
     }
-    await simulation.populate({
-      path: "questions.question",
-      select: "-course -module -createdAt -updatedAt",
-    });
     res.status(200).json(simulation);
   } catch (error) {
     console.error("Error getting single simulation:", error);
