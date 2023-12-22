@@ -9,7 +9,7 @@ require("dotenv").config();
 // Connect to the database
 mongoose
   .connect(process.env.MONGO_URI, {
-    dbName: "doctoryqcm",
+    dbName: "doctoryQcm",
   })
   .then(() => console.log("Connected to the database"))
   .catch((err) => console.error("Database connection error:", err));
@@ -48,6 +48,11 @@ app.use("/answers", answerRoutes);
 app.use("/stats", statsRoutes);
 app.use("/simulations", simulationRoutes);
 
+app.get("/", function (req, res) {
+  res.redirect(
+    "https://www.icegif.com/wp-content/uploads/2023/01/icegif-162.gif"
+  );
+});
 // Handle 404 errors
 app.use((req, res, next) => {
   res.status(404).json({ message: "Route not found" });

@@ -96,6 +96,7 @@ const updateUser = async (req, res) => {
         email: req.body.email,
         name: req.body.name,
         phoneNumber: req.body.phoneNumber,
+        deviceToken: req.body.deviceToken,
       },
       { new: true }
     );

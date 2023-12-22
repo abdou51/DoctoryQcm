@@ -5,10 +5,10 @@ const userJwt = require("../middlewares/userJwt");
 
 // Define routes
 
-router.post("/", categoryController.createCategory);
-router.get("/", categoryController.getCategories);
-router.get("/stats", categoryController.getCategoriesWithStats);
-router.put("/:id", categoryController.updateCategory);
-router.delete("/:id", categoryController.deleteCategory);
+// router.post("/", categoryController.createCategory);
+router.get("/", userJwt, categoryController.getCategories);
+router.get("/stats", userJwt, categoryController.getCategoriesWithStats);
+// router.put("/:id", categoryController.updateCategory);
+// router.delete("/:id", categoryController.deleteCategory);
 
 module.exports = router;
