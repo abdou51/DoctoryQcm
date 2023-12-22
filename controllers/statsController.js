@@ -381,33 +381,23 @@ const getAnswersPercentageByCourse = async (req, res) => {
 
 const getFavouriteStats = async (req, res) => {
   try {
+    const userId = req.user.userId;
     const categories = await Category.find();
-
-    const stats = await Promise.all(
+    const results = await Promise.all(
       categories.map(async (category) => {
-        const favouriteModules = await Favourite.countDocuments({
-          "question.module": category._id,
+        const count = await Favourite.countDocuments({
+          user: userId,
+          question: {
+            $in: await Question.find({ category: category._id }).select("_id"),
+          },
         });
-        const favouriteCourses = await Favourite.countDocuments({
-          "question.course": category._id,
-        });
-        const favouriteQuestions = await Favourite.countDocuments({
-          "question.category": category._id,
-        });
-
-        return {
-          category: category,
-          favouriteModules,
-          favouriteCourses,
-          favouriteQuestions,
-        };
+        return { category: category, count };
       })
     );
-
-    res.status(200).json(stats);
+    res.status(200).json(results);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Error getting Favourite Stats" });
+    res.status(500).json({ error: "Error getting favourite stats" });
   }
 };
 module.exports = {
