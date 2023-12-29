@@ -88,8 +88,14 @@ const loginUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.body.id;
     const isAdmin = req.user.isAdmin;
+    if(!userId){
+      return res.status(400).json({
+        success: false,
+        message: "Identifiant utilisateur manquant",
+      });
+    }
     if (!isAdmin && req.body.isValidated) {
       return res.status(401).json({ success: false, message: "non autorisé" });
     }
