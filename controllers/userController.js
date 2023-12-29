@@ -89,17 +89,21 @@ const loginUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const userId = req.user.userId;
-
-    const user = await User.findByIdAndUpdate(
-      userId,
-      {
-        email: req.body.email,
-        name: req.body.name,
-        phoneNumber: req.body.phoneNumber,
-        deviceToken: req.body.deviceToken,
-      },
-      { new: true }
-    );
+    const isAdmin = req.user.isAdmin;
+    if (!isAdmin && req.body.isValidated) {
+      return res.status(401).json({ success: false, message: "non autorisé" });
+    }
+    let userData = {
+      email: req.body.email,
+      name: req.body.name,
+      phoneNumber: req.body.phoneNumber,
+      deviceToken: req.body.deviceToken,
+      isValidated: req.body.isValidated,
+    };
+    if (req.body.password) {
+      userData.password = await bcrypt.hash(req.body.password, 10);
+    }
+    const user = await User.findByIdAndUpdate(userId, userData, { new: true });
     if (!user) {
       return res
         .status(400)
@@ -133,16 +137,39 @@ const getMe = async (req, res) => {
     console.log(error);
   }
 };
+
 const getUsers = async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
+    const searchText = req.query.text;
+
+    let query = {
+      isAdmin: false,
+    };
+
     const options = {
       page,
       limit,
       select: "-passwordHash",
-      sort: "-createdAt",
+      sort: "-_id",
     };
-    const users = await User.paginate({}, options);
+
+    if (searchText) {
+      query = {
+        $and: [
+          {
+            $or: [
+              { email: { $regex: new RegExp(searchText, "i") } },
+              { name: { $regex: new RegExp(searchText, "i") } },
+            ],
+          },
+          { isAdmin: false },
+        ],
+      };
+    }
+
+    const users = await User.paginate(query, options);
+
     if (!users) {
       return res
         .status(400)
@@ -154,6 +181,7 @@ const getUsers = async (req, res) => {
     console.log(error);
   }
 };
+
 module.exports = {
   registerUser,
   loginUser,
