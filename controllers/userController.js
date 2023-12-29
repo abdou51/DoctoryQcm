@@ -133,9 +133,31 @@ const getMe = async (req, res) => {
     console.log(error);
   }
 };
+const getUsers = async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const options = {
+      page,
+      limit,
+      select: "-passwordHash",
+      sort: "-createdAt",
+    };
+    const users = await User.paginate({}, options);
+    if (!users) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Utilisateur N'existe Pas" });
+    }
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).send("Une erreur s'est produite .");
+    console.log(error);
+  }
+};
 module.exports = {
   registerUser,
   loginUser,
   updateUser,
   getMe,
+  getUsers,
 };

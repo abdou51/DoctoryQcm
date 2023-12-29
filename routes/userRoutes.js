@@ -8,4 +8,5 @@ router.post("/register", userController.registerUser);
 router.post("/login", userController.loginUser);
 router.put("/", userJwt, userController.updateUser);
 router.get("/me", userJwt, userController.getMe);
+router.get("/", userController.getUsers);
 module.exports = router;
