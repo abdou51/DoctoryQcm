@@ -1,0 +1,59 @@
+const ResidencyQuestion = require("../models/residencyQuestion");
+const Residency = require("../models/residency");
+
+const createResidencyQuestion = async (req, res) => {
+  try {
+    const residency = await Residency.findById(req.body.residency);
+    const newResidencyQuestion = new ResidencyQuestion({
+      residency: residency.id,
+      ...req.body,
+    });
+
+    const createdResidencyQuestion = await newResidencyQuestion.save();
+
+    res.status(201).json(createdResidencyQuestion);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error creating ResidencyQuestion" });
+  }
+};
+
+const deleteResidencyQuestion = async (req, res) => {
+  const residencyQuestionId = req.params.id;
+  try {
+    const deletedResidencyQuestion = await ResidencyQuestion.findByIdAndDelete(
+      residencyQuestionId
+    );
+
+    if (!deletedResidencyQuestion) {
+      return res.status(404).json({ error: "ResidencyQuestion not found" });
+    }
+
+    res.status(200).json({ message: "ResidencyQuestion deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Error deleting ResidencyQuestion" });
+  }
+};
+
+const getResidencyQuestions = async (req, res) => {
+  try {
+    const residency = req.query.residency;
+    if (!residency) {
+      return res
+        .status(400)
+        .json({ error: "Missing residency id in request query" });
+    }
+    const residencyQuestions = await ResidencyQuestion.find({
+      residency: residency,
+    }).select("-createdAt -updatedAt");
+    res.status(200).json(residencyQuestions);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching Residency Questions" });
+  }
+};
+
+module.exports = {
+  createResidencyQuestion,
+  deleteResidencyQuestion,
+  getResidencyQuestions,
+};

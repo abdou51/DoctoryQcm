@@ -9,7 +9,10 @@ const noteSchema = new mongoose.Schema(
     question: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Question",
-      required: true,
+    },
+    residencyQuestion: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ResidencyQuestion",
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,

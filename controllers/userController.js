@@ -88,7 +88,7 @@ const loginUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const userId = req.body.id;
+    const userId = req.params.id;
     const isAdmin = req.user.isAdmin;
     if(!userId){
       return res.status(400).json({
