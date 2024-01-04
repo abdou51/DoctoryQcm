@@ -2,11 +2,11 @@ const express = require("express");
 const router = express.Router();
 const residencyController = require("../controllers/residencyController");
 const userJwt = require("../middlewares/userJwt");
+// const adminJwt = require("../middlewares/adminJwt");
 
 router.get("/", userJwt, residencyController.getResidencies);
 
-// this will be changed to adminJwt in the bellow
-router.post("/", userJwt, residencyController.createResidency);
-router.delete("/:id", userJwt, residencyController.deleteResidency);
+// router.post("/", adminJwt, residencyController.createResidency);
+// router.delete("/:id", adminJwt, residencyController.deleteResidency);
 
 module.exports = router;
