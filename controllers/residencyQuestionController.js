@@ -1,5 +1,6 @@
 const ResidencyQuestion = require("../models/residencyQuestion");
 const Residency = require("../models/residency");
+const Note = require("../models/note");
 
 const createResidencyQuestion = async (req, res) => {
   try {
@@ -38,6 +39,7 @@ const deleteResidencyQuestion = async (req, res) => {
 const getResidencyQuestions = async (req, res) => {
   try {
     const residency = req.query.residency;
+    const userId = req.user.userId;
     if (!residency) {
       return res
         .status(400)
@@ -46,7 +48,21 @@ const getResidencyQuestions = async (req, res) => {
     const residencyQuestions = await ResidencyQuestion.find({
       residency: residency,
     }).select("-createdAt -updatedAt");
-    res.status(200).json(residencyQuestions);
+    let result = [];
+    for (const question of residencyQuestions) {
+    
+      const note = await Note.findOne({
+        user: userId,
+        residencyQuestion: question._id,
+      }).select("note");
+
+
+      result.push({
+        question: question,
+        note: note,
+      });
+    }
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: "Error fetching Residency Questions" });
   }
