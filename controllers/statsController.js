@@ -179,6 +179,7 @@ const getNumberOfFavouriteQuestionsPerCourse = async (req, res) => {
       .json({ error: "Error getting Favourite Questions by Course" });
   }
 };
+
 const getAnswersPercentageByCategory = async (req, res) => {
   try {
     const userId = new mongoose.Types.ObjectId(req.user.userId);
@@ -207,6 +208,18 @@ const getAnswersPercentageByCategory = async (req, res) => {
                 },
               },
             },
+            {
+              $group: {
+                _id: { question: "$question", user: "$user" },
+                uniqueAnswers: { $addToSet: "$_id" },
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                answers: { $size: "$uniqueAnswers" },
+              },
+            },
           ],
           as: "answers",
         },
@@ -216,14 +229,19 @@ const getAnswersPercentageByCategory = async (req, res) => {
           _id: 1,
           name: 1,
           totalQuestions: { $size: "$questions" },
-          answeredQuestions: { $size: "$answers" },
+          answeredQuestions: { $sum: "$answers.answers" },
           percentage: {
             $cond: [
               { $eq: [{ $size: "$questions" }, 0] },
               0,
               {
                 $multiply: [
-                  { $divide: [{ $size: "$answers" }, { $size: "$questions" }] },
+                  {
+                    $divide: [
+                      { $sum: "$answers.answers" },
+                      { $size: "$questions" },
+                    ],
+                  },
                   100,
                 ],
               },
@@ -241,6 +259,7 @@ const getAnswersPercentageByCategory = async (req, res) => {
       .json({ error: "Error getting Answers Percentage by Category" });
   }
 };
+
 const getAnswersPercentageByModule = async (req, res) => {
   try {
     const userId = new mongoose.Types.ObjectId(req.user.userId);
@@ -275,6 +294,18 @@ const getAnswersPercentageByModule = async (req, res) => {
                 },
               },
             },
+            {
+              $group: {
+                _id: { question: "$question", user: "$user" },
+                uniqueAnswers: { $addToSet: "$_id" },
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                answers: { $size: "$uniqueAnswers" },
+              },
+            },
           ],
           as: "answers",
         },
@@ -284,14 +315,19 @@ const getAnswersPercentageByModule = async (req, res) => {
           _id: 1,
           name: 1,
           totalQuestions: { $size: "$questions" },
-          answeredQuestions: { $size: "$answers" },
+          answeredQuestions: { $sum: "$answers.answers" },
           percentage: {
             $cond: [
               { $eq: [{ $size: "$questions" }, 0] },
               0,
               {
                 $multiply: [
-                  { $divide: [{ $size: "$answers" }, { $size: "$questions" }] },
+                  {
+                    $divide: [
+                      { $sum: "$answers.answers" },
+                      { $size: "$questions" },
+                    ],
+                  },
                   100,
                 ],
               },
@@ -344,6 +380,18 @@ const getAnswersPercentageByCourse = async (req, res) => {
                 },
               },
             },
+            {
+              $group: {
+                _id: { question: "$question", user: "$user" },
+                uniqueAnswers: { $addToSet: "$_id" },
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                answers: { $size: "$uniqueAnswers" },
+              },
+            },
           ],
           as: "answers",
         },
@@ -353,14 +401,19 @@ const getAnswersPercentageByCourse = async (req, res) => {
           _id: 1,
           name: 1,
           totalQuestions: { $size: "$questions" },
-          answeredQuestions: { $size: "$answers" },
+          answeredQuestions: { $sum: "$answers.answers" },
           percentage: {
             $cond: [
               { $eq: [{ $size: "$questions" }, 0] },
               0,
               {
                 $multiply: [
-                  { $divide: [{ $size: "$answers" }, { $size: "$questions" }] },
+                  {
+                    $divide: [
+                      { $sum: "$answers.answers" },
+                      { $size: "$questions" },
+                    ],
+                  },
                   100,
                 ],
               },
