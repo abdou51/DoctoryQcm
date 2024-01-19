@@ -83,7 +83,6 @@ const getQuestionsWithDetails = async (req, res) => {
   try {
     const course = req.query.course;
     const userId = req.user.userId;
-    console.log(req.user);
     if (!course) {
       return res
         .status(400)

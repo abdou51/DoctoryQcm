@@ -7,7 +7,13 @@ const createAnswer = async (req, res) => {
     const existingAnswer = await Answer.findOne({
       user: req.user.userId,
       question: req.body.question, 
+
     });
+    if (!answerExist) {
+      const newAnswer = new Answer({
+        user: req.user.userId,
+        ...req.body,
+      });
 
     if(!existingAnswer){
       const newAnswer = new Answer({
@@ -20,7 +26,6 @@ const createAnswer = async (req, res) => {
     else{
       res.status(201).json(existingAnswer);
     }
-
 
   } catch (error) {
     console.log(error);
