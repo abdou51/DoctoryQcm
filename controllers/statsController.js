@@ -211,7 +211,7 @@ const getAnswersPercentageByCategory = async (req, res) => {
             {
               $group: {
                 _id: { question: "$question", user: "$user" },
-                uniqueAnswers: { $addToSet: "$_id" },
+                uniqueAnswers: { $addToSet: { question: "$question", user: "$user" } },
               },
             },
             {
@@ -297,7 +297,7 @@ const getAnswersPercentageByModule = async (req, res) => {
             {
               $group: {
                 _id: { question: "$question", user: "$user" },
-                uniqueAnswers: { $addToSet: "$_id" },
+                uniqueAnswers: { $addToSet: { question: "$question", user: "$user" } },
               },
             },
             {
