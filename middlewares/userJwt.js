@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
 function userJwt(req, res, next) {
   const authHeader = req.headers["authorization"];
@@ -12,7 +13,10 @@ function userJwt(req, res, next) {
   try {
     const decoded = jwt.verify(token, process.env.secret);
     req.user = decoded;
-    console.log(req.user);
+    const user = User.findById(req.user.userId);
+    if(!user.isValidated){
+      return res.status(401).json({ error: "Not validated" });
+    }
     next();
   } catch (err) {
     if (err.name === "TokenExpiredError") {
