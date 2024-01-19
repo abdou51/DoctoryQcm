@@ -46,7 +46,9 @@ const registerUser = async (req, res) => {
 };
 const loginUser = async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({
+      email: { $regex: new RegExp(`^${req.body.email}$`, "i") },
+    });
 
     if (!user) {
       return res.status(400).json({
@@ -90,7 +92,7 @@ const updateUser = async (req, res) => {
   try {
     const userId = req.params.id;
     const isAdmin = req.user.isAdmin;
-    if(!userId){
+    if (!userId) {
       return res.status(400).json({
         success: false,
         message: "Identifiant utilisateur manquant",
