@@ -16,6 +16,9 @@ const answerSchema = new mongoose.Schema(
   { versionKey: false, timestamps: true }
 );
 
+// Creating a compound index
+answerSchema.index({ user: 1, question: 1 });
+
 const Answer = mongoose.model("Answer", answerSchema);
 
 module.exports = Answer;
