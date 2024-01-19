@@ -3,9 +3,11 @@ const mongoose = require("mongoose");
 
 const createAnswer = async (req, res) => {
   try {
-    const answerExist = Answer.findOne({
+
+    const existingAnswer = await Answer.findOne({
       user: req.user.userId,
-      question: req.body.question,
+      question: req.body.question, 
+
     });
     if (!answerExist) {
       const newAnswer = new Answer({
@@ -13,12 +15,18 @@ const createAnswer = async (req, res) => {
         ...req.body,
       });
 
+    if(!existingAnswer){
+      const newAnswer = new Answer({
+        user: req.user.userId,
+        ...req.body,
+      });
       const createdAnswer = await newAnswer.save();
-
       res.status(201).json(createdAnswer);
-    } else {
-      res.status(201).json({ error: "Answer already exists" });
     }
+    else{
+      res.status(201).json(existingAnswer);
+    }
+
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Error creating Answer" });
