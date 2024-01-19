@@ -383,7 +383,7 @@ const getAnswersPercentageByCourse = async (req, res) => {
             {
               $group: {
                 _id: { question: "$question", user: "$user" },
-                uniqueAnswers: { $addToSet: "$_id" },
+                uniqueAnswers: { $addToSet: { question: "$question", user: "$user" } },
               },
             },
             {
