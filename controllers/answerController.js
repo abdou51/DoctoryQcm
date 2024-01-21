@@ -7,22 +7,16 @@ const createAnswer = async (req, res) => {
       user: req.user.userId,
       question: req.body.question,
     });
-    if (!answerExist) {
+    if (!existingAnswer) {
       const newAnswer = new Answer({
         user: req.user.userId,
         ...req.body,
       });
+      const createdAnswer = await newAnswer.save();
 
-      if (!existingAnswer) {
-        const newAnswer = new Answer({
-          user: req.user.userId,
-          ...req.body,
-        });
-        const createdAnswer = await newAnswer.save();
-        res.status(201).json(createdAnswer);
-      } else {
-        res.status(201).json(existingAnswer);
-      }
+      res.status(201).json(createdAnswer);
+    } else {
+      res.status(201).json(existingAnswer);
     }
   } catch (error) {
     console.log(error);
