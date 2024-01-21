@@ -27,6 +27,7 @@ const createQuestion = async (req, res) => {
     res.status(500).json({ error: "Error creating Question" });
   }
 };
+
 const updateQuestion = async (req, res) => {
   const questionId = req.params.id;
   try {
@@ -48,6 +49,7 @@ const updateQuestion = async (req, res) => {
     res.status(500).json({ error: "Error updating Question" });
   }
 };
+
 const deleteQuestion = async (req, res) => {
   const questionId = req.params.id;
   try {
@@ -91,7 +93,8 @@ const getQuestionsWithDetails = async (req, res) => {
     }
     const questions = await Question.find({ course: course }).select(
       "-createdAt -updatedAt -module -category -course"
-    );
+    )
+    .sort({ createdAt: -1 });
     let result = [];
     for (const question of questions) {
       const isFavourite = await Favourite.exists({
