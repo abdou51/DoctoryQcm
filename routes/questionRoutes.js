@@ -5,7 +5,7 @@ const userJwt = require("../middlewares/userJwt");
 
 // Define routes
 
-// router.post("/", questionController.createQuestion);
+router.post("/", questionController.createQuestion);
 router.get(
   "/randommodule",
   userJwt,

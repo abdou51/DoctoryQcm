@@ -92,7 +92,7 @@ const getQuestionsWithDetails = async (req, res) => {
         .json({ error: "Missing course id in request query" });
     }
     const questions = await Question.find({ course: course }).select(
-      "-createdAt -updatedAt -module -category -course"
+      "-updatedAt -module -category -course"
     )
     .sort({ createdAt: -1 });
     let result = [];
