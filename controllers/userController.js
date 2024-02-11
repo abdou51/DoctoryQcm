@@ -109,7 +109,7 @@ const updateUser = async (req, res) => {
       isValidated: req.body.isValidated,
     };
     if (req.body.password) {
-      userData.password = await bcrypt.hash(req.body.password, 10);
+      userData.passwordHash = await bcrypt.hash(req.body.password, 10);
     }
     const user = await User.findByIdAndUpdate(userId, userData, { new: true });
     if (!user) {
