@@ -1,7 +1,12 @@
 const Note = require("../models/note");
-
+const mongoose = require("mongoose");
 const createNote = async (req, res) => {
   try {
+    await Note.deleteMany({
+      user: req.user.userId,
+      question: req.body.question,
+    });
+
     const newNote = new Note({
       user: req.user.userId,
       ...req.body,
@@ -18,6 +23,19 @@ const createNote = async (req, res) => {
 const updateNote = async (req, res) => {
   const noteId = req.params.id;
   try {
+    const note = await Note.findById(noteId).populate("user");
+    if (note.user.id !== req.user.userId) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    await Note.deleteMany({
+      user: req.user.userId,
+      question: req.body.question,
+      _id: {
+        $ne: new mongoose.Types.ObjectId(noteId),
+      },
+    });
+
     const updatedNote = await Note.findByIdAndUpdate(noteId, req.body, {
       new: true,
     });
