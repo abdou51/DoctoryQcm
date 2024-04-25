@@ -7,7 +7,7 @@ const userJwt = require("../middlewares/userJwt");
 router.get("/", userJwt, residencyQuestionController.getResidencyQuestions);
 
 
-// router.post("/", adminJwt, residencyQuestionController.createResidencyQuestion);
+router.post("/", residencyQuestionController.createResidencyQuestion);
 // router.delete("/:id", adminJwt, residencyQuestionController.deleteResidencyQuestion);
 
 module.exports = router;
