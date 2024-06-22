@@ -43,6 +43,7 @@ const deleteCourse = async (req, res) => {
     res.status(500).json({ error: "Error deleting Course" });
   }
 };
+
 const getCourses = async (req, res) => {
   try {
     const moduleId = req.query.module;
