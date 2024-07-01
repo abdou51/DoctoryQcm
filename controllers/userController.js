@@ -9,14 +9,13 @@ const registerUser = async (req, res) => {
     let user = await User.findOne({
       email: userData.email,
     });
-
     if (user) {
       return res.status(400).json({
         success: false,
         message: "L'utilisateur avec l'email donné existe déjà",
       });
     }
-
+    
     if (userData.email === password) {
       return res.status(400).json({
         success: false,
@@ -64,6 +63,7 @@ const loginUser = async (req, res) => {
             message: "Votre compte n'est pas encore activé",
           });
         }
+        console.log(req.body.deviceToken);
         if (user.deviceToken !== null && user.deviceToken !== undefined && user.deviceToken !== "" && user.deviceToken !== req.body.deviceToken) {
           return res.status(400).json({
             success: false,

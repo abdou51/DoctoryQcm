@@ -35,6 +35,7 @@ const statsRoutes = require("./routes/statsRoutes");
 const simulationRoutes = require("./routes/simulationRoutes");
 const residencyRoutes = require("./routes/residencyRoutes");
 const residencyQuestionRoutes = require("./routes/residencyQuestionRoutes");
+const downloadRoutes = require("./routes/downloadRoutes");
 
 const api = process.env.API_URL;
 
@@ -51,6 +52,7 @@ app.use("/stats", statsRoutes);
 app.use("/simulations", simulationRoutes);
 app.use("/residencies", residencyRoutes);
 app.use("/residencyQuestions", residencyQuestionRoutes);
+app.use("/downloads", downloadRoutes);
 
 app.get("/", function (req, res) {
   res.redirect(

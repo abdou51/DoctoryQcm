@@ -7,6 +7,7 @@ const userJwt = require("../middlewares/userJwt");
 
 // router.post("/", courseController.createCourse);
 router.get("/", userJwt, courseController.getCourses);
+// router.get("/", userJwt, courseController.getCoursesByName);
 // router.put("/:id", courseController.updateCourse);
 // router.delete("/:id", courseController.deleteCourse);
 
