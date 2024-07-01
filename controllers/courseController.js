@@ -47,6 +47,7 @@ const deleteCourse = async (req, res) => {
 const getCourses = async (req, res) => {
   try {
     const moduleId = req.query.module;
+
     // changed params to query
     if (!moduleId) {
       return res.status(400).json({ error: "Module not provided" });
@@ -58,9 +59,29 @@ const getCourses = async (req, res) => {
   }
 };
 
+const getCoursesByName = async (req, res) => {
+  try {
+    console.log("get courses");
+    const courseName = req.query.name;
+    if (!courseName) {
+      return res.status(400).json({ error: "Course name not provided" });
+    }
+
+    // Use a case-insensitive search for the course name
+    const courses = await Course.find({
+      name: { $regex: new RegExp(courseName, "i") },
+    });
+
+    res.status(200).json(courses);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching Course" });
+  }
+};
+
 module.exports = {
   createCourse,
   updateCourse,
   deleteCourse,
   getCourses,
+  getCoursesByName,
 };
